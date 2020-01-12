@@ -1,4 +1,4 @@
- Customisable Multi-Column Order View
+Customisable Multi-Column Order View
 ==========================
 
 This is a plugin for `pretix`_.
