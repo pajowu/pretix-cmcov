@@ -1,0 +1,142 @@
+{% extends "pretixcontrol/event/base.html" %}
+{% load i18n %}
+{% load eventurl %}
+{% load urlreplace %}
+{% load money %}
+{% load bootstrap3 %}
+{% load eventurl %}
+{% load safelink %}
+{% load eventsignal %}
+{% block title %}{% trans "Orders" %}{% endblock %}
+{% block content %}
+    <h1>{% trans "Orders" %}</h1>
+    <div class="row filter-form">
+        <form class="col-md-2 col-xs-12"
+                action="{% url "control:event.orders.go" event=request.event.slug organizer=request.event.organizer.slug %}">
+            <div class="input-group">
+                <input type="text" name="code" class="form-control" placeholder="{% trans "Order code" %}" autofocus>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">{% trans "Go!" %}</button>
+                </span>
+            </div>
+        </form>
+        <form class="" action="" method="get">
+            <div class="col-md-2 col-xs-6">
+                {% bootstrap_field filter_form.questions layout='inline' %}
+            </div>
+            <div class="col-md-2 col-xs-6">
+                {% bootstrap_field filter_form.hide_user layout='inline' %}
+            </div>
+            <div class="col-md-2 col-xs-6">
+
+                <span data-toggle="tooltip"
+                                                        title="{% trans "Also show orders that did not answer any question" %}">
+                    {% bootstrap_field filter_form.show_all_orders layout='inline' %}
+                </span>
+            </div>
+            <div class="col-md-2 col-xs-6">
+                <button class="btn btn-primary btn-block" type="submit">
+                    <span class="fa fa-filter"></span>
+                    <span class="hidden-md">
+                        {% trans "Filter" %}
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+    {% if not filter_form.filtered and orders|length == 0 %}
+        <div class="empty-collection">
+            <p>
+                {% blocktrans trimmed %}
+                    No orders are matching your filters. Did somebody order a ticket yet?
+                {% endblocktrans %}
+            </p>
+
+            {% if not request.event.live %}
+                <a href="{% url "control:event.live" event=request.event.slug organizer=request.event.organizer.slug %}"
+                        class="btn btn-primary btn-lg">
+                    {% trans "Take your shop live" %}
+                </a>
+            {% else %}
+                <a href="{% eventurl request.event "presale:event.index" %}" class="btn btn-primary btn-lg">
+                    {% trans "Go to the ticket shop" %}
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-condensed table-hover table-orders">
+                <thead>
+                <tr>
+                    <th>{% trans "Order code" %}
+                        <a href="?{% url_replace request 'ordering' '-code' %}"><i class="fa fa-caret-down"></i></a>
+                        <a href="?{% url_replace request 'ordering' 'code' %}"><i class="fa fa-caret-up"></i></a></th>
+                    {% if not filter_form.cleaned_data.hide_user %}
+                        <th>{% trans "User" %}
+                            <a href="?{% url_replace request 'ordering' '-email' %}"><i class="fa fa-caret-down"></i></a>
+                            <a href="?{% url_replace request 'ordering' 'email' %}"><i class="fa fa-caret-up"></i></a></th>
+                    {% endif %}
+                    <th>{% trans "Order date" %}
+                        <a href="?{% url_replace request 'ordering' '-datetime' %}"><i class="fa fa-caret-down"></i></a>
+                        <a href="?{% url_replace request 'ordering' 'datetime' %}"><i class="fa fa-caret-up"></i></a>
+                    </th>
+                    {% for question in filter_form.cleaned_data.questions %}
+                        <th>{{ question.question }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for o in orders %}
+                    <tr>
+                        <td>
+                            <strong>
+                                <a href="{% url "control:event.order" event=request.event.slug organizer=request.event.organizer.slug code=o.code %}">
+                                    {{ o.code }}</a>
+                            </strong>
+                            {% if o.testmode %}
+                                <span class="label label-warning">{% trans "TEST MODE" %}</span>
+                            {% endif %}
+                        </td>
+                        {% if not filter_form.cleaned_data.hide_user %}
+                            <td>
+                                {{ o.email|default_if_none:"" }}
+                                {% if o.invoice_address.name %}
+                                    <br>{{ o.invoice_address.name }}
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                        <td>{{ o.datetime|date:"SHORT_DATETIME_FORMAT" }}</td>
+                        {% for question in filter_form.cleaned_data.questions %}
+                            <td>
+                                {% for position in o.all_positions.all %}
+                                    {% for q in position.answers.all %}
+                                        {% if q.question == question %}
+                                            {% if q.answer %}
+                                                {% if q.file %}
+                                                    <span class="fa fa-file"></span>
+                                                    <a href="{{ q.backend_file_url }}?token={% answer_token request q %}">
+                                                        {{ q.file_name }}
+                                                    </a>
+                                                    <span class="label label-danger" data-toggle="tooltip"
+                                                            title="{% trans "This file has been uploaded by a user and could contain viruses or other malicious content." %}">
+                                                        {% trans "UNSAFE" %}
+                                                    </span>
+                                                {% else %}
+                                                    {{ q.answer|linebreaksbr }}
+                                                {% endif %}
+                                            {% else %}
+                                                <em>{% trans "not answered" %}</em>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "pretixcontrol/pagination.html" %}
+    {% endif %}
+{% endblock %}

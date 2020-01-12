@@ -1,0 +1,3 @@
+recursive-include pretix_ordertable/static *
+recursive-include pretix_ordertable/templates *
+recursive-include pretix_ordertable/locale *
