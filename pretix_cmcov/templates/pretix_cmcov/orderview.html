@@ -42,6 +42,13 @@
                     </span>
                 </button>
             </div>
+            <div class="col-md-2 col-xs-6">
+                <a class="btn btn-block" href="{% url "control:event.orders.export" event=request.event.slug organizer=request.event.organizer.slug %}?identifier=checkinlist{%for q in filter_form.cleaned_data.questions%}&checkinlist-questions={{q.pk}}{%endfor%}">
+                    <span class="hidden-md">
+                        {% trans "Export Checkin list" %}
+                    </a>
+                </button>
+            </div>
         </form>
     </div>
     {% if not filter_form.filtered and orders|length == 0 %}
