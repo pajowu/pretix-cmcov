@@ -7,11 +7,11 @@ except ImportError:
 
 
 class PluginApp(PluginConfig):
-    name = "pretix_ordertable"
-    verbose_name = " Customisable Multi-Column Order View"
+    name = "pretix_cmcov"
+    verbose_name = "Customisable Multi-Column Order View"
 
     class PretixPluginMeta:
-        name = ugettext_lazy(" Customisable Multi-Column Order View")
+        name = ugettext_lazy("Customisable Multi-Column Order View")
         author = "Karl Engelhardt"
         description = ugettext_lazy("Show orders with custom columns")
         visible = True
@@ -22,4 +22,4 @@ class PluginApp(PluginConfig):
         from . import signals  # NOQA
 
 
-default_app_config = "pretix_ordertable.PluginApp"
+default_app_config = "pretix_cmcov.PluginApp"

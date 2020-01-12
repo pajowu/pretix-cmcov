@@ -23,11 +23,11 @@ cmdclass = {"build": CustomBuild}
 
 
 setup(
-    name="pretix-order-table",
+    name="pretix-cmcov",
     version="1.0.0",
-    description="Show orders with custom columns",
+    description="Customisable Multi-Column Order View",
     long_description=long_description,
-    url="https://github.com/pajowu/pretix-order-table",
+    url="https://github.com/pajowu/pretix-cmcov",
     author="Karl Engelhardt",
     author_email="pajowu@pajowu.de",
     license="Apache Software License",
@@ -37,6 +37,6 @@ setup(
     cmdclass=cmdclass,
     entry_points="""
 [pretix.plugin]
-pretix_ordertable=pretix_ordertable:PretixPluginMeta
+pretix_cmcov=pretix_cmcov:PretixPluginMeta
 """,
 )

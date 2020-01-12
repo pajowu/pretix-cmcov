@@ -8,7 +8,7 @@ Development setup
 
 1. Make sure that you have a working `pretix development setup`_.
 
-2. Clone this repository, eg to ``local/pretix-order-table``.
+2. Clone this repository, eg to ``local/pretix-cmcov``.
 
 3. Activate the virtual environment you use for pretix development.
 

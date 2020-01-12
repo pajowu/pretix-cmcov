@@ -1,36 +1,8 @@
-from django.db.models import (
-    Count,
-    IntegerField,
-    OuterRef,
-    Prefetch,
-    ProtectedError,
-    Q,
-    Subquery,
-    Sum,
-)
+from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
 from django.utils.functional import cached_property
 from django.views.generic import ListView
-from pretix.base.models import (
-    CachedCombinedTicket,
-    CachedFile,
-    CachedTicket,
-    Invoice,
-    InvoiceAddress,
-    Item,
-    ItemVariation,
-    LogEntry,
-    Order,
-    QuestionAnswer,
-    Quota,
-    generate_position_secret,
-    generate_secret,
-)
+from pretix.base.models import Order
 from pretix.base.models.orders import OrderPosition
-from pretix.control.forms.filter import (
-    EventOrderFilterForm,
-    OverviewFilterForm,
-    RefundFilterForm,
-)
 from pretix.control.permissions import EventPermissionRequiredMixin
 from pretix.control.views import PaginationMixin
 
@@ -40,7 +12,7 @@ from .forms import QuestionForm
 class OrderList(EventPermissionRequiredMixin, PaginationMixin, ListView):
     model = Order
     context_object_name = "orders"
-    template_name = "pretix_ordertable/orderview.html"
+    template_name = "pretix_cmcov/orderview.html"
     permission = "can_view_orders"
 
     def get_queryset(self):
